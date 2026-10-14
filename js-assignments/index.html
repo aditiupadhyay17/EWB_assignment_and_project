@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JavaScript Assignments & Capstone</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    button { margin: 4px; padding: 8px 14px; cursor: pointer; }
+    pre { background: #111; color: #e6e6e6; padding: 1rem; border-radius: 8px; min-height: 160px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>JavaScript Assignments & Capstone</h1>
+  <p>Click a button to run it. Output appears below and in the browser console (F12).</p>
+  <div id="buttons"></div>
+  <pre id="out"></pre>
+
+  <script>
+    const files = [
+      ["Assignment 1", "assignment1.js"], ["Assignment 2", "assignment2.js"],
+      ["Assignment 3", "assignment3.js"], ["Assignment 4", "assignment4.js"],
+      ["Assignment 5", "assignment5.js"], ["Assignment 6", "assignment6.js"],
+      ["Capstone Project", "capstone.js"]
+    ];
+    const out = document.getElementById("out");
+    const originalLog = console.log;
+    console.log = (...args) => {
+      originalLog(...args);
+      out.textContent += args.map((a) => typeof a === "string" ? a : JSON.stringify(a)).join(" ") + "\n";
+    };
+    files.forEach(([label, file]) => {
+      const b = document.createElement("button");
+      b.textContent = label;
+      b.onclick = () => {
+        out.textContent = "";
+        fetch(file).then((r) => r.text()).then((code) => {
+          // run in an isolated function scope so re-running never causes redeclaration errors
+          new Function(code)();
+        }).catch(() => {
+          out.textContent = "Open this page through a local server (e.g. VS Code Live Server) so files can load.";
+        });
+      };
+      document.getElementById("buttons").appendChild(b);
+    });
+  </script>
+</body>
+</html>
